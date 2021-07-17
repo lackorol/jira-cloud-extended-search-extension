@@ -1,0 +1,72 @@
+{
+  "key": "${addon.key}",
+  "baseUrl": "${addon.base-url}",
+  "name": "One Extension",
+  "authentication": {
+    "type": "jwt"
+  },
+  "lifecycle": {
+    "installed": "/installed",
+    "uninstalled": "/uninstalled"
+  },
+  "scopes": [
+    "READ"
+  ],
+  "modules": {
+    "generalPages": [
+      {
+        "key": "one-extended-search",
+        "location": "system.top.navigation.bar",
+        "name": {
+          "value": "View"
+        },
+        "url": "/extensionSearch?username=fedor",
+        "conditions": [
+          {
+            "condition": "user_is_logged_in"
+          }
+        ]
+      }
+    ],
+    "webSections": [
+      {
+        "location": "admin_plugins_menu",
+        "key": "polontech-connect-section",
+        "name": {
+          "value": "Connect Spring Boot"
+        }
+      },
+
+      {
+        "location": "opsbar-operations",
+        "weight": 11,
+        "key": "one-section-key",
+        "name": {
+          "value": "Section Name"
+        }
+      }
+    ],
+
+    "webItems": [
+      {
+        "location": "one-section-key",
+        "name": {
+          "value": "Menu Item"
+        },
+        "key": "one-menu-key",
+        "url": "https://www.google.com"
+      }
+    ],
+
+    "adminPages": [
+      {
+        "name": {
+          "value": "Edit"
+        },
+        "key": "polontech-connect-edit",
+        "url": "/connect-edit",
+        "location": "admin_plugins_menu/polontech-connect-section"
+      }
+    ]
+  }
+}

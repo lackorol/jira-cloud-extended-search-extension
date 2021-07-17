@@ -1,0 +1,11 @@
+spring.jpa.hibernate.ddl-auto: update
+spring.datasource.driver-class-name: org.postgresql.Driver
+spring.datasource.username: postgres
+spring.jpa.database: POSTGRESQL
+spring.datasource.url: jdbc:postgresql://localhost:5432/one_extension # Use a file-based backing store for HSQL
+
+addon:
+  key: one-extension
+  base-url: https://ad57331c7a78.ngrok.io
+
+logging.level.com.atlassian.connect.spring: DEBUG

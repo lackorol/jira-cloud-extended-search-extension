@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <script src="https://connect-cdn.atl-paas.net/all.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <!-- Custom Functions -->
+    <script type="text/javascript" th:src="@{/js/jqlExtensionInputSearchBar.js}"></script>
+    <script type="text/javascript" th:src="@{/js/apiV2.js}"></script>
+    <script type="text/javascript" th:src="@{/js/results.js}"></script>
+    <!>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link type="text/css" th:href="@{/styles/main.css}" rel="stylesheet"/>
+
+    <!-- AUI   -->
+    <link rel="stylesheet" href="https://unpkg.com/@atlassian/aui@9.3.0/dist/aui/aui-prototyping.css" media="all">
+    <script src="https://unpkg.com/@atlassian/aui@9.3.0/dist/aui/aui-css-deprecations.js"></script>
+    <script src="https://unpkg.com/@atlassian/aui@9.3.0/dist/aui/aui-prototyping.js"></script>
+    <!>
+</head>
+
+<body>
+<nav>
+</nav>
+
+<article>
+    <div class="col-lg-4 col-md-5 col-sm-3">
+        <form class="navbar-form" id="theSearchForm" name="theSearchForm" role="search" method="get"
+              action="yoursearchfilescriptgoeshere">
+            <div class="input-group">
+                <span class="jql-indicator aui-icon aui-icon-small"></span>
+                <textarea type="text" id="jql-extension-input-search-bar" class="form-control jql-filter"
+                          placeholder="Search"></textarea>
+                <span id="characterSpan" style="visibility: hidden;"></span>
+                <div class="input-group-btn">
+                    <button class="aui-button" id="button-spin-1">Search</button>
+
+                    <!--                <a class="btn btn-default" href="javascript:document.theSearchForm.submit();">BUTTON<i-->
+                    <!--                        class="glyphicon glyphicon-search"></i></a>-->
+
+
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <table id="extensionSearchTable" class="aui">
+        <thead>
+        <tr>
+            <th id="summary">Summary</th>
+            <th id="key">Key</th>
+            <th id="reporter">Reporter</th>
+            <th id="assignee">Assignee</th>
+            <th id="status">Status</th>
+            <th id="resolution">Resolution</th>
+            <th id="created">Created</th>
+            <th id="updated">Updated</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+        <tr th:each="issue: ${tenIssues}">
+            <td th:text="${issue.summary}"/>
+            <td th:text="${issue.key}"/>
+            <td>
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <div style="display: inline-block;
+                         position: relative;
+                          outline: 0px;
+                          height: 36px;
+                           width: 36px;">
+
+                <span role="img" aria-label="User "
+                      style='background-color: transparent;
+                        background-image: url("https://avatar-management.services.atlassian.com/default/48");
+                        background-position: center center;
+                        background-repeat: no-repeat;
+                        background-size: cover; border-radius: 50%;
+                        display: flex; flex: 1 1 100%;
+                        height: 100%; width: 100%;'>
+                </span>
+                    </div>
+                    <span th:text="${issue.reporter}" th:remove:tag></span>
+                </div>
+            </td>
+            <td th:text="${issue.assignee}"/>
+            <td th:text="${issue.status}"/>
+            <td th:text="${issue.resolution}"/>
+            <td th:text="${issue.created}"/>
+            <td th:text="${issue.updated}"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="extensionSearchTablePagination" class="pagination" th:if="${totalPages > 0}">
+        <a th:each="pageNumber : ${pageNumbers}" th:if="${pageNumberStat.count <= 5}" th:href="@{/extensionSearch(page=${pageNumber})}"
+           th:text=${pageNumber}>
+        </a>
+
+        <a th:each="pageNumber : ${pageNumbers}" th:if="${pageNumber == pageNumberStat.size}" th:href="@{/extensionSearch(page=${pageNumber})}"
+           th:text=Last>
+        </a>
+    </div>
+</article>
+
+<footer>
+    Copyright (c) 2021 The One
+</footer>
+
+<script>
+    $(document).ready(function () {
+    })
+
+    $(document).on('keyup', '#jql-extension-input-search-bar', function () {
+    })
+
+    function writeOutIssueFields(issueLinks) {
+        let issues = [];
+        issueLinks.forEach(issueLink => {
+            const issueObject = {
+                summary: issueLink.fields.summary,
+                key: issueLink.key,
+                reporter: issueLink.fields.reporter?.displayName,
+                assignee: issueLink.fields.assignee?.displayName,
+                status: issueLink.fields.status.name,
+                resolution: issueLink.fields.resolution?.name,
+                created: issueLink.fields.created,
+                updated: issueLink.fields.updated
+            };
+            issues.push(issueObject);
+        })
+        return issues;
+    }
+
+    $(document).ready(function () {
+        let availableTags = [
+            "issue",
+            "issue.property",
+            "issueBlocks",
+            "issueCauses",
+            "issueClones",
+            "issueDuplicates",
+            "issueIsBlockedBy",
+            "issueIsCausedBy",
+            "issueIsClonedBy",
+            "issueIsCoveredBy",
+            "issueIsDependantOf",
+            "issueIsDependentOn",
+            "issueIsDuplicatedBy",
+            "issueIsPartOf",
+            "linksCount"
+        ];
+
+        (async () => {
+            let customfields = await getAllCustomFields()
+            console.log(customfields);
+            availableTags = [...availableTags, ...Object.values(customfields).map(o => o[0])];
+            availableTags = availableTags.sort();
+
+            $.ui.autocomplete.filter = function (array, terms) {
+                arrayOfTerms = terms.split(" ");
+                var term = $.map(arrayOfTerms, function (tm) {
+                    return $.ui.autocomplete.escapeRegex(tm);
+                }).join('|');
+                var matcher = new RegExp("\\b" + term, "i");
+                //var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
+
+                return $.grep(array, function (value) {
+                    return matcher.test(value.label || value.value || value);
+                });
+            };
+
+            $("#jql-extension-input-search-bar").bind("keydown", function (event) {
+                if (event.which === 32)
+                    $('#characterSpan').html($(this).val());
+
+                if (event.keyCode === $.ui.keyCode.TAB &&
+                    $(this).data("ui-autocomplete").menu.active) {
+                    event.preventDefault();
+                }
+            })
+                .autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        const term = request.term;
+                        if (term) {
+                            const tags = term.match(/[^\s"']+|"[^"]*"| $/g);
+                            const lastTerm = tags[tags.length - 2];
+                            const lastTermBeforeOperator = tags[tags.length - 3];
+
+                            const customTags = term.split(/ \s*/);
+                            const customLastTerm = customTags[customTags.length - 2];
+                            const customLastTermBeforeOperator = customTags[customTags.length - 3];
+
+                            const customFieldType = customfields[lastTerm?.slice(1, -1)]?.[2];
+                            const customFieldTypeBefore = customfields[lastTermBeforeOperator?.slice(1, -1)]?.[2];
+                            console.log(customFieldType);
+                            if (TYPES_GROUP1.includes(customFieldType)) {
+                                response(OPERATORS_GROUP1);
+                            } else if (TYPES_GROUP2.includes(customFieldType)) {
+                                response(OPERATORS_GROUP2);
+                            } else if (customFieldType === 'string') {
+                                response(OPERATORS_STRING);
+                            } else if (customFieldType === 'timetracking') {
+                                response(OPERATORS_TIME_TRACKING);
+                            } else if (customFieldType === 'sd-servicelevelagreement') {
+                                response(OPERATORS_SD_SERVICELEVELAGREEMENT);
+
+                            } else if (customLastTerm === 'linksCount') {
+                                response(OPERATORS);
+                            } else if (TYPES.includes(customFieldTypeBefore)) {
+                                response("");
+                            } else if (tags.length % 4 === 0) {
+                                response(CONNECTORS);
+                            } else if (customLastTermBeforeOperator === 'linksCount') {
+                                response("");
+                            } else {
+                                const results = $.ui.autocomplete.filter(availableTags, request.term);
+                                response(results.slice(0, 10));
+                            }
+                        }
+
+
+                        /* console.log(term);
+                         console.log(tags);
+                         console.log(customTags);
+                         console.log(lastTerm?.slice(1, -1));*/
+                    },
+                    focus: function () {
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        var terms = this.value.split(/ \s*/);
+                        terms.pop();
+                        const customFieldType = customfields[ui.item.value]?.[2];
+                        let termValue = ui.item.value;
+                        if (TYPES.includes(customFieldType)) {
+                            const append = '"';
+                            termValue = `${append}${termValue}${append}`;
+                        }
+                        terms.push(termValue);
+                        this.value = terms.reduce((previous, current, index, array) => {
+                            return previous + ' ' + current;
+                        })
+
+                        $('#characterSpan').html($(this).val());
+                        return false;
+                    },
+
+                    open: function (event, ui) {
+                        var input = $(event.target),
+                            widget = input.autocomplete("widget"),
+                            style = $.extend(input.css([
+                                "font",
+                                "border-left",
+                                "padding-left"
+                            ]), {
+                                position: "absolute",
+                                visibility: "hidden",
+                                "padding-right": 0,
+                                "border-right": 0,
+                                "white-space": "pre"
+                            }),
+                            div = $("<div/>"),
+                            pos = {
+                                my: "left top",
+                                collision: "none"
+                            },
+                            offset = -7; // magic number to align the first letter
+                                         // in the text field with the first letter
+                                         // of suggestions
+                                         // depends on how you style the autocomplete box
+
+                        widget.css("width", "");
+
+                        div
+                            .text(input.val().replace(/\S*$/, ""))
+                            .css(style)
+                            .insertAfter(input);
+                        offset = Math.min(
+                            Math.max(offset + div.width(), 0),
+                            input.width() - widget.width()
+                        );
+                        div.remove();
+
+                        pos.at = "left+" + offset + " bottom";
+                        input.autocomplete("option", "position", pos);
+
+                        widget.position($.extend({of: input}, pos));
+                    }
+                })
+        })();
+    });
+
+    document.addEventListener("keyup", onsubmitEvent, false);
+
+    function onsubmitEvent(e) {
+        const keyCode = e.keyCode;
+        if (keyCode === 13) {
+            //addJqlErrorOrJqlGoodIntoSearchbar();
+            let jql = $("#jql-extension-input-search-bar").val();
+            (async () => {
+                let totals = await getTotals(jql);
+                let [issueLinks, whereWeStopped] =
+                    await paginate(linkedIssues, [jql, 1], 0, totals);
+                let firstTen = issueLinks.slice(0, 10);
+                let nextResults = issueLinks.slice(10);
+                const issues = writeOutIssueFields(firstTen);
+                console.log(issues);
+                sendFirstTen(issues, totals);
+                console.time('nextIssues');
+                while (whereWeStopped < totals) {
+                    [issueLinks, whereWeStopped] =
+                        await paginate(linkedIssues, [jql, 1], whereWeStopped, totals);
+                    Array.prototype.push.apply(nextResults, issueLinks);
+                }
+                const nextIssues = writeOutIssueFields(nextResults);
+                sendNextIssues(nextIssues);
+                console.timeEnd('nextIssues');
+            })()
+        }
+    }
+</script>
+</body>

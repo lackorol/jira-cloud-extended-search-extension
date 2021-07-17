@@ -1,0 +1,86 @@
+.jql-filter {
+    display: block;
+    max-width: none;
+    width: 100%;
+    border-color: #DFE1E6;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 2px;
+    box-sizing: border-box
+}
+
+.jqlerror {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEX////QRDfQRDf////23drtubTllo/iioLTUETQRDcAAAAAAAAAAAAAAAAAAAAAAAC28nPuAAAAA3RSTlMAEbv1HI3KAAAAG3RFWHRqaXJhLXN5c3RlbS1pbWFnZS10eXBlAGljb266KjlFAAAAYUlEQVR42mMUamcAgQ4mcTDNUMhUAGGwMzFAAZDx9sP//WDG3f1v7oEZRm/2K4MZLPKfHMCM/x+git984jsAZpxXcbwLVMDAYCL0XwksIsTA6AhmQADzXQsw/ZPpJUSgHwDaMBiG6Dr+OwAAAABJRU5ErkJggu3oJsMthTkDAPTFQ2zGPnhOAAAAAElFTkSuQmCC);
+    background-position: 0 0;
+}
+
+.jqlgood {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAG3RFWHRqaXJhLXN5c3RlbS1pbWFnZS10eXBlAGljb266KjlFAAAAu0lEQVR42mP4//8/AyUYQiCDadYKQDwBiC8A8X8ovgAVUwApwW3ANOsEIP6ApBEdg+QSsBsA0fyfSJyAagDE2R9IMACkVgHZgAn4NAjMdf9//vWt//Ovb0UWn4BswAVcmhUWh4A1g8D9T8+Q5S4gGwCX6L+4EoxBbINVCf/f//gM1gwyBOQSZLVYDYBpWH/vEF7N6AbAvYBsKz7N6F5ACUSQIfufngO7AodmjECkMBopTkhUScqUZCZKMAC09CItMaJUQAAAAABJRU5ErkJgggHTmuaqSWzhJ/lWaYR1YVM3mJxFRL1LaTXLTLFEioVVymq0uT+6wm51MHVDfeSqALltrp1zAC7SG+xWh6eTW0zdYPr+Qu9xoAK6KuBb/b1jTN3AarRxd/Z/hGdfn0sTyh1k0pAvnu4e/hbOVEAsXRmI3yY8vD6vbJaZf7rGIM0pr2VNhcJPcvUIEKRjwCvpdc1e9acs9ZefaRPNAcxugJD9I6tEAAAAAElFTkSuQmCC);
+    background-position: 0 0;
+}
+
+.jql-indicator {
+    left: 7px;
+    position: absolute;
+    top: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+/* styles for main layout */
+body {
+       min-height: 100vh;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: 50px 1fr 50px;
+    grid-template-areas:
+    "nav header"
+    "nav main"
+    "nav footer";
+    height: 100vh;
+}
+
+h1 {
+    grid-area: header;
+}
+
+footer {
+    grid-area: footer;
+}
+
+nav {
+    grid-area: nav;
+}
+
+
+article {
+    grid-area: main;
+}
+
+* {
+       box-sizing: border-box;
+}
+
+h1, footer {
+    background: lightgray;
+}
+
+h2 {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+nav {
+    border-right: 1px solid lightgray;
+}
+
+nav, article {
+    overflow-y: auto;
+}
+
+h1, nav, article, footer {
+    padding: 1rem;
+}

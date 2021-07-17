@@ -1,0 +1,5 @@
+#set($title="View Value")
+#parse("header.vm")
+<p>Your saved value: ${value}</p>
+</body>
+</html>

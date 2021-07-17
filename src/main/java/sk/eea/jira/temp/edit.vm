@@ -1,0 +1,17 @@
+#set($title="Edit Value")
+#parse("header.vm")
+<form class="aui" method="post">
+    <div class="field-group">
+        <label for="text-input">Input your value<span class="aui-icon icon-required">required</span></label>
+        <input class="text" type="text" id="text-input" name="text-input" title="Text input" value="${value}">
+        <div class="description">The value is associated with the JIRA instance</div>
+    </div>
+
+    <div class="buttons-container">
+        <div class="buttons">
+            <input class="button submit" type="submit" value="Save" id="save-button">
+        </div>
+    </div>
+</form>
+</body>
+</html>
